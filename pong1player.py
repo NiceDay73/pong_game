@@ -13,6 +13,7 @@ win.title('Pong by @Josep')
 win.bgcolor('blue')
 win.setup(width=800, height=600)
 win.tracer(0)
+win.delay(2)
 
 # Create paddle
 paddle_a = turtle.Turtle()
