@@ -50,7 +50,6 @@ class Player():
         self.cards = []   # list with all the cards in one hand
         self.value = 0   # value of the hand
         self.num_aces = 0  # number of aces so adjustments can be done
-        self.win = False  # True when the player wins
 
     def initialize(self):
         self.cards = []   # list with all the cards in one hand
@@ -64,22 +63,13 @@ class Player():
             self.num_aces += 1
 
     def validate_cards(self):
-        if self.value > 21:
-            if self.num_aces <= 0:
-                return self.value
-            else:
-                for n in self.cards:
-                    if n[2] == 11:
-                        self.value -= 10
-                        self.num_aces -= 1
-                    if self.value <= 21:
-                        break
+        # Change the value of the aces from 11 to 1 until
+        # the value is less than 21 (if possible)
+        while self.value > 21 and self.num_aces:
+            self.value -= 10
+            self.num_aces -= 1
 
-        if self.value < 21:
-            return self.value
-        elif self.value == 21:
-            self.win = True
-            return self.value
+        return self.value
 
 
 class Human(Player):
@@ -135,8 +125,8 @@ def board(deck, human, dealer):
     '''
     Print the board of the game
     '''
-    v_h = human.validate_cards()
-    v_d = dealer.validate_cards()
+    val_human = human.validate_cards()
+    val_dealer = dealer.validate_cards()
     print('\n' * 100)
     print('        B L A C K J A C K')
     print('        -----------------')
@@ -175,7 +165,7 @@ def board(deck, human, dealer):
     print(f'        Chips: {human.chips}  Bet: {human.bet}')
     print()
     print()
-    return (v_d, v_h)
+    return (val_dealer, val_human)
 
 
 def ask_play_again():
@@ -226,7 +216,6 @@ def continue_hitting(dealer, human1):
         else:
             return True
     elif dealer.value == 21:
-        dealer.win = True
         return False
     else:
         return False
